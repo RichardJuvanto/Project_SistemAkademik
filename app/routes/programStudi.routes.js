@@ -1,5 +1,5 @@
 module.exports = (app) => {
-    const pegawai = require("../controllers/programStudi.controller.js");
+    const programStudi = require("../controllers/programStudi.controller.js");
     
     var router = require("express").Router();
     

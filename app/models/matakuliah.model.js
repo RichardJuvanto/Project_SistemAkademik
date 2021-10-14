@@ -1,7 +1,7 @@
 const { Schema } = require("mongoose");
 
 module.exports = (mongoose) => {
-    const Kelas = mongoose.model("kelas",
+    const Matakuliah = mongoose.model("matakuliah",
         mongoose.Schema({
             nama: String,
             kode: String,
@@ -11,5 +11,5 @@ module.exports = (mongoose) => {
             timestamps: true
         })
     );
-    return Kelas;
+    return Matakuliah;
 }

@@ -26,7 +26,7 @@ exports.findAll = (req, res) => {
    ? { nama: { $regex: new RegExp(nama), $options: "i" } }
    : {};
  
- ProgramStudi.find(condition)
+ ProgramStudi.find(condition).populate("id_kelas")
    .then((data) => {
      res.send(data);
    })
