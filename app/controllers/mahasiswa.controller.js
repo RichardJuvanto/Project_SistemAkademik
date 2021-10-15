@@ -116,3 +116,21 @@ exports.deleteAll = (req, res) => { };
 
 exports.findAllPublished = (req, res) => { };
 
+exports.findByKelas = (req, res) =>{
+  Mahasiswa.find(
+    {
+      $match:
+      {
+        id_kelas:req.query.kelas,
+      }
+    }
+  )
+    .then((data) => {
+      res.send(data);
+    })
+    .catch((err) => {
+      res.status(500).send({
+        message: err.message || "Some error occurred while retrieving.",
+      });
+    });
+};
