@@ -1,6 +1,5 @@
 1. API Mahasiswa
-
-  Data Mahasiswa yang digunakan => (foto, nama, nim, nik, jenisKelamin, id_programStudi, id_kelas, email, alamat, noTelp, alamatOrtu)
+   Data Mahasiswa yang digunakan => (foto, nama, nim, nik, jenisKelamin, id_programStudi, id_kelas, email, alamat, noTelp, alamatOrtu)
   
   a. GET Seluruh Data Mahasiswa : https://localhost:8081/api/mahasiswa/
   
