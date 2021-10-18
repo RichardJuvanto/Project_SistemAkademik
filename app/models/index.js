@@ -13,6 +13,7 @@ db.kelas = require('./kelas.model')(mongoose);
 db.dosen = require('./dosen.model')(mongoose);
 db.matakuliah = require('./matakuliah.model')(mongoose);
 db.programStudi = require('./programStudi.model')(mongoose);
+db.absensi = require('./absensi.model')(mongoose);
  
 module.exports = db;
 
