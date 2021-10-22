@@ -24,3 +24,10 @@
    Data Program Studi yang digunakan => (nama, id_kelas)
    a. GET / POST Seluruh Data Program Studi : https://localhost:8081/api/programStudi/ atau https://calm-savannah-30077.herokuapp.com/api/programStudi/
    b. GET Data Program Studi satuan / DELETE / PUT (UPDATE) : https://localhost:8081/api/programStudi/:id atau https://calm-savannah-30077.herokuapp.com/api/programStudi/:id
+   
+6. API Absensi
+   Data Absensi yang digunakan (Dalam bentuk JSON) => (id_kelas, id_matakuliah, id_dosen, tanggal, jam (masuk dan keluar), absensi (id_mahasiswa, keterangan)
+   a. GET / POST Seluruh Data Absensi : https://localhost:8081/api/absensi/
+   b. GET Laporan Absensi : https://localhost:8081/api/absensi/laporan?matakuliah=<id_matakuliah>&kelas=<id_kelas>
+   c. GET Data Absensi satuan : https://localhost:8081/api/absensi/find/:id atau https://calm-savannah-30077.herokuapp.com/api/absensi/find/:id
+   d. UPDATE / DELETE Data Absensi : https://localhost:8081/api/absensi/:id
