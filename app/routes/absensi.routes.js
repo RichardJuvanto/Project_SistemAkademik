@@ -7,11 +7,13 @@ module.exports = (app) => {
     
     router.get("/", absensi.findAll);
 
-    router.get("/:id", absensi.findOne);
+    router.get("/find/:id", absensi.findOne);
 
     router.put("/:id", absensi.update);
     
     router.delete("/:id", absensi.delete);
+
+    router.get("/laporan", absensi.laporan);
     
     app.use("/api/absensi", router);
    };
