@@ -40,7 +40,7 @@ exports.findAll = (req, res) => {
 exports.findOne = (req, res) => {
  const id = req.params.id;
  
- ProgramStudi.findById(id)
+ ProgramStudi.findById(id).populate("id_kelas")
    .then((data) => {
      if (!data) res.status(404).send({ message: "Not found with id " + id });
      else res.send(data);

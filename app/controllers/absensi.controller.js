@@ -8,8 +8,7 @@ exports.create = (req, res) => {
     id_matakuliah: req.body.id_matakuliah,
     id_dosen: req.body.id_dosen,
     tanggal: req.body.tanggal,
-    'jam.masuk': req.body.masuk,
-    'jam.keluar': req.body.keluar,
+    'jam': req.body.jam,
     'absensi': req.body.absensi
   });
   // Save Absensi in the database
