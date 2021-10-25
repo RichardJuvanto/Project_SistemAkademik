@@ -35,7 +35,7 @@ exports.findAll = (req, res) => {
     ? { nama: { $regex: new RegExp(nama), $options: "i" } }
     : {};
 
-  Mahasiswa.find(condition)
+  Mahasiswa.find(condition).populate("id_programStudi").populate("id_kelas")
     .then((data) => {
       res.send(data);
     })
@@ -49,7 +49,7 @@ exports.findAll = (req, res) => {
 exports.findOne = (req, res) => {
   const id = req.params.id;
 
-  Mahasiswa.findById(id)
+  Mahasiswa.findById(id).populate("id_programStudi").populate("id_kelas")
     .then((data) => {
       if (!data) res.status(404).send({ message: "Not found with id " + id });
       else res.send(data);
