@@ -51,7 +51,7 @@
    
    Data Absensi yang digunakan (Dalam bentuk JSON) => (id_kelas, id_matakuliah, id_dosen, tanggal, jam (masuk dan keluar), absensi (id_mahasiswa, keterangan)
    
-   a. GET / POST Seluruh Data Absensi : https://localhost:8081/api/absensi/
+   a. GET / POST Seluruh Data Absensi : https://localhost:8081/api/absensi/ atau https://calm-savannah-30077.herokuapp.com/api/absensi/
    
    b. GET Laporan Absensi : https://localhost:8081/api/absensi/laporan?matakuliah=<id_matakuliah>&kelas=<id_kelas> atau https://calm-savannah-30077.herokuapp.com/api/absensi/laporan?matakuliah=<id_matakuliah>&kelas=<id_kelas>
    
