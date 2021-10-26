@@ -2,13 +2,13 @@
 
    Data Mahasiswa yang digunakan => (foto, nama, nim, nik, jenisKelamin, id_programStudi, id_kelas, email, alamat, noTelp, alamatOrtu)
    
-  a. GET / POST Seluruh Data Mahasiswa : https://localhost:8081/api/mahasiswa/ atau https://calm-savannah-30077.herokuapp.com/api/mahasiswa/ 
+   a. GET / POST Seluruh Data Mahasiswa : https://localhost:8081/api/mahasiswa/ atau https://calm-savannah-30077.herokuapp.com/api/mahasiswa/ 
   
-  b. GET Data Mahasiswa satuan : https://localhost:8081/api/mahasiswa/find/:id atau https://calm-savannah-30077.herokuapp.com/api/mahasiswa/find/:id
+   b. GET Data Mahasiswa satuan : https://localhost:8081/api/mahasiswa/find/:id atau https://calm-savannah-30077.herokuapp.com/api/mahasiswa/find/:id
   
-  c. GET Data Mahasiswa berdasarkan Kelas : https://localhost:8081/api/mahasiswa/findByKelas?kelas=<value> atau https://calm-savannah-30077.herokuapp.com/api/mahasiswa/findByKelas?kelas=<value>
+   c. GET Data Mahasiswa berdasarkan Kelas : https://localhost:8081/api/mahasiswa/findByKelas?kelas=<value> atau https://calm-savannah-30077.herokuapp.com/api/mahasiswa/findByKelas?kelas=<value>
    
-  d. PUT / DELETE Data Mahasiswa : https://localhost:8081/api/mahasiswa/:id atau https://calm-savannah-30077.herokuapp.com/api/mahasiswa/:id
+   d. PUT / DELETE Data Mahasiswa : https://localhost:8081/api/mahasiswa/:id atau https://calm-savannah-30077.herokuapp.com/api/mahasiswa/:id
    
    
 2. API Dosen
