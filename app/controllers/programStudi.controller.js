@@ -26,7 +26,7 @@ exports.findAll = (req, res) => {
    ? { nama: { $regex: new RegExp(nama), $options: "i" } }
    : {};
  
- ProgramStudi.find(condition).populate("id_kelas")
+ ProgramStudi.find(condition).populate({path: 'id_kelas', populate:{path:"id_matakuliah"}})
    .then((data) => {
      res.send(data);
    })
@@ -40,7 +40,7 @@ exports.findAll = (req, res) => {
 exports.findOne = (req, res) => {
  const id = req.params.id;
  
- ProgramStudi.findById(id).populate("id_kelas")
+ ProgramStudi.findById(id).populate({path: 'id_kelas', populate:{path:"id_matakuliah"}})
    .then((data) => {
      if (!data) res.status(404).send({ message: "Not found with id " + id });
      else res.send(data);
