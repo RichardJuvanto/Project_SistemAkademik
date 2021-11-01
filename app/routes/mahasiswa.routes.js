@@ -43,7 +43,7 @@ module.exports = (app) => {
 
     router.get("/find/:id", mahasiswa.findOne);
 
-    router.put("/:id", mahasiswa.update);
+    router.put("/:id",upload.any(), mahasiswa.update);
     
     router.delete("/:id", mahasiswa.delete);
 
