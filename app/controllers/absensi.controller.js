@@ -25,7 +25,7 @@ exports.create = (req, res) => {
 };
 
 exports.findAll = (req, res) => {
-  Absensi.find()
+  Absensi.find().populate("id_matakuliah").populate("absensi.id_mahasiswa")
     .then((data) => {
       res.send(data);
     })
@@ -142,7 +142,7 @@ exports.detail = (req, res) => {
             percent: { $multiply: [{ $divide: ["$jumlah", data[0].total] }, 100] },
           }
         },
-      ]).then((data1) => {
+      ]).populate("id_mahasiswa").then((data1) => {
         res.send(data1);
       });
     });
@@ -177,6 +177,7 @@ exports.laporan = (req, res) => {
       },
     ]).then((data) => {
       Absensi.aggregate([
+        
         {
           $match: {
             id_kelas: mongoose.Types.ObjectId(req.query.kelas),
@@ -190,6 +191,9 @@ exports.laporan = (req, res) => {
           $group: {
             _id: { id_mahasiswa: "$absensi.id_mahasiswa", keterangan: "$absensi.keterangan" },
             kelas: { $first: "$id_kelas" },
+            matakuliah: {$first: "$id_matakuliah"},
+            mahasiswa: {$first: "$absensi.id_mahasiswa"},
+            keterangan: {$first: "$absensi.keterangan"},
             jumlah: { $sum: 1 },
           }
         },{
@@ -199,12 +203,38 @@ exports.laporan = (req, res) => {
         },
         {
           $project: {
-            _id: 1,
             kelas: 1,
+            matakuliah: 1,
+            mahasiswa: 1,
+            keterangan: 1,
             percent: { $multiply: [{ $divide: ["$jumlah", data[0].total] }, 100] },
+          }
+        },{
+          $lookup:{
+            from: "mahasiswas",
+            localField: "mahasiswa",
+            foreignField: "_id",
+            as: "mahasiswa"
+          }
+        },
+        {
+          $lookup:{
+            from: "kelas",
+            localField: "kelas",
+            foreignField: "_id",
+            as: "kelas"
+          }
+        },
+        {
+          $lookup:{
+            from: "matakuliahs",
+            localField: "matakuliah",
+            foreignField: "_id",
+            as: "matakuliah"
           }
         },
       ]).then((data1) => {
+        //res.send(data1);
         res.send(data1);
       });
     });
