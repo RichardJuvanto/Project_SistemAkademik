@@ -130,7 +130,7 @@ exports.detail = (req, res) => {
             kelas: { $first: "$id_kelas" },
             jumlah: { $sum: 1 },
           }
-        },{
+        }, {
           $match: {
             "_id.id_mahasiswa": mongoose.Types.ObjectId(req.query.mahasiswa),
           }
@@ -177,7 +177,7 @@ exports.laporan = (req, res) => {
       },
     ]).then((data) => {
       Absensi.aggregate([
-        
+
         {
           $match: {
             id_kelas: mongoose.Types.ObjectId(req.query.kelas),
@@ -191,12 +191,12 @@ exports.laporan = (req, res) => {
           $group: {
             _id: { id_mahasiswa: "$absensi.id_mahasiswa", keterangan: "$absensi.keterangan" },
             kelas: { $first: "$id_kelas" },
-            matakuliah: {$first: "$id_matakuliah"},
-            mahasiswa: {$first: "$absensi.id_mahasiswa"},
-            keterangan: {$first: "$absensi.keterangan"},
+            matakuliah: { $first: "$id_matakuliah" },
+            mahasiswa: { $first: "$absensi.id_mahasiswa" },
+            keterangan: { $first: "$absensi.keterangan" },
             jumlah: { $sum: 1 },
           }
-        },{
+        }, {
           $match: {
             "_id.keterangan": "Hadir",
           }
@@ -209,8 +209,8 @@ exports.laporan = (req, res) => {
             keterangan: 1,
             percent: { $multiply: [{ $divide: ["$jumlah", data[0].total] }, 100] },
           }
-        },{
-          $lookup:{
+        }, {
+          $lookup: {
             from: "mahasiswas",
             localField: "mahasiswa",
             foreignField: "_id",
@@ -218,7 +218,7 @@ exports.laporan = (req, res) => {
           }
         },
         {
-          $lookup:{
+          $lookup: {
             from: "kelas",
             localField: "kelas",
             foreignField: "_id",
@@ -226,7 +226,7 @@ exports.laporan = (req, res) => {
           }
         },
         {
-          $lookup:{
+          $lookup: {
             from: "matakuliahs",
             localField: "matakuliah",
             foreignField: "_id",
@@ -235,27 +235,20 @@ exports.laporan = (req, res) => {
         },
       ]).then((data1) => {
         //res.send(data1);
-        res.send(data1);
+        if (!data1) {
+          res.status(503).send({
+            message: "id_matakuliah or id_kelas was not found!"
+          });
+        }else{
+          res.send(data1);
+        }
+      });
+    }).catch((err)=>{
+      res.status(500).send({
+        message: "id_matakuliah or id_kelas not Found!"
       });
     });
-
-  } else {
-    Absensi.aggregate([
-      {
-        $unwind: "$absensi",
-      },
-      /*{
-         $group: {
-           _id: { id_mahasiswa: "$absensi.id_mahasiswa", keterangan: "$absensi.keterangan" },
-           kelas: {$first: "$id_kelas"},
-           Jumlah: { $sum: 1 },
-         }
-       },*/
-    ]).then((data) => {
-      res.send(data);
-    });
   }
-
 };
 
 exports.deleteAll = (req, res) => { };
