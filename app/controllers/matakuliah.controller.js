@@ -10,16 +10,26 @@ exports.create = (req, res) => {
  });
  
  // Save Matakuliah in the database
- matakuliah
-   .save(matakuliah)
-   .then((data) => {
-     res.send(data);
-   })
-   .catch((err) => {
-     res.status(500).send({
-       message: err.message || "Some error occurred while creating the Matakuliah.",
-     });
-   });
+ Matakuliah.find({
+   kode: req.body.kode,
+ }).then((data)=>{
+  if(!data.length > 0){
+    matakuliah
+    .save(matakuliah)
+    .then((data1) => {
+      res.send(data1);
+    })
+    .catch((err) => {
+      res.status(500).send({
+        message: err.message || "Some error occurred while creating the Matakuliah.",
+      });
+    });
+  }else{
+    res.status(412).send({
+      message: "Kode "+req.body.kode+" Sudah Terdaftar",
+    });
+  }
+ });
 };
  
 exports.findAll = (req, res) => {

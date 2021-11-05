@@ -142,7 +142,7 @@ exports.detail = (req, res) => {
             percent: { $multiply: [{ $divide: ["$jumlah", data[0].total] }, 100] },
           }
         },
-      ]).populate("id_mahasiswa").then((data1) => {
+      ]).then((data1) => {
         res.send(data1);
       });
     });

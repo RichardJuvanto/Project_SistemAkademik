@@ -11,16 +11,26 @@ exports.create = (req, res) => {
  });
  
  // Save Dosen in the database
- dosen
-   .save(dosen)
-   .then((data) => {
-     res.send(data);
-   })
-   .catch((err) => {
-     res.status(500).send({
-       message: err.message || "Some error occurred while creating the Dosen.",
-     });
-   });
+Dosen.find({
+  nip: req.body.nip,
+}).then((data)=>{
+  if(!data.length() > 0){
+    dosen
+    .save(dosen)
+    .then((data) => {
+      res.send(data);
+    })
+    .catch((err) => {
+      res.status(500).send({
+        message: err.message || "Some error occurred while creating the Dosen.",
+      });
+    });
+  }else{
+   res.status(412).send({
+     message: "Dosen dengan NIP "+req.body.nip+" Sudah Terdaftar",
+   }) 
+  }
+});
 };
  
 exports.findAll = (req, res) => {

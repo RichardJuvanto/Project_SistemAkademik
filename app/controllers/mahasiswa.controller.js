@@ -17,16 +17,27 @@ exports.create = (req, res) => {
   });
 
   // Save Mahasiswa in the database
-  mahasiswa
-    .save(mahasiswa)
-    .then((data) => {
-      res.send(data);
-    })
-    .catch((err) => {
-      res.status(500).send({
-        message: err.message || "Some error occurred while creating the Mahasiswa.",
+  Mahasiswa.find({
+    nim: req.body.nim,
+  }).then((data)=>{
+    if(!data.length > 0){
+      mahasiswa
+      .save(mahasiswa)
+      .then((data1) => {
+        res.send(data1);
+      })
+      .catch((err) => {
+        res.status(500).send({
+          message: err.message || "Some error occurred while creating the Mahasiswa.",
+        });
       });
-    });
+    }else{
+      res.status(412).send({
+        message: "NIM "+ req.body.nim+ " Telah Terpakai",
+      });
+    }
+  })
+  
 };
 
 exports.findAll = (req, res) => {

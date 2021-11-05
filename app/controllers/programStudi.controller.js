@@ -8,16 +8,27 @@ exports.create = (req, res) => {
  });
  
  // Save ProgramStudi in the database
- programStudi
-   .save(programStudi)
-   .then((data) => {
-     res.send(data);
-   })
-   .catch((err) => {
-     res.status(500).send({
-       message: err.message || "Some error occurred while creating the ProgramStudi.",
-     });
-   });
+ ProgramStudi.find({
+   nama: req.body.nama,
+ }).then((data)=>{
+  if(!data.length > 0){
+    programStudi
+    .save(programStudi)
+    .then((data) => {
+      res.send(data);
+    })
+    .catch((err) => {
+      res.status(500).send({
+        message: err.message || "Some error occurred while creating the ProgramStudi.",
+      });
+    });
+  }else{
+    res.status(412).send({
+      message: "Nama "+req.body.nama+" Sudah Terdaftar"
+    })
+  }
+ });
+ 
 };
  
 exports.findAll = (req, res) => {
