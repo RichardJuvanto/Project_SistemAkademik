@@ -14,7 +14,7 @@ exports.create = (req, res) => {
 Dosen.find({
   nip: req.body.nip,
 }).then((data)=>{
-  if(!data.length() > 0){
+  if(!data.length > 0){
     dosen
     .save(dosen)
     .then((data) => {
