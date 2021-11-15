@@ -25,7 +25,7 @@ exports.create = (req, res) => {
 };
 
 exports.findAll = (req, res) => {
-  Absensi.find().populate("id_matakuliah").populate("absensi.id_mahasiswa")
+  Absensi.find().populate("id_matakuliah").populate("absensi.id_mahasiswa").populate("id_dosen").populate("id_kelas")
     .then((data) => {
       res.send(data);
     })
@@ -192,6 +192,7 @@ exports.laporan = (req, res) => {
             _id: { id_mahasiswa: "$absensi.id_mahasiswa", keterangan: "$absensi.keterangan" },
             kelas: { $first: "$id_kelas" },
             matakuliah: { $first: "$id_matakuliah" },
+            dosen: {$first: "$id_dosen"},
             mahasiswa: { $first: "$absensi.id_mahasiswa" },
             keterangan: { $first: "$absensi.keterangan" },
             jumlah: { $sum: 1 },
@@ -206,6 +207,7 @@ exports.laporan = (req, res) => {
             kelas: 1,
             matakuliah: 1,
             mahasiswa: 1,
+            dosen: 1,
             keterangan: 1,
             percent: { $multiply: [{ $divide: ["$jumlah", data[0].total] }, 100] },
           }
@@ -223,6 +225,14 @@ exports.laporan = (req, res) => {
             localField: "kelas",
             foreignField: "_id",
             as: "kelas"
+          }
+        },
+        {
+          $lookup: {
+            from: "dosens",
+            localField: "dosen",
+            foreignField: "_id",
+            as: "dosen"
           }
         },
         {

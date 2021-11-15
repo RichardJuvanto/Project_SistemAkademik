@@ -24,7 +24,7 @@ exports.create = (req, res) => {
           });
         });
     } else {
-      res.status(412).send({ message: "Nama "+req.body.nama + " Sudah Terdaftar" });
+      res.status(412).send({ message: "Nama " + req.body.nama + " Sudah Terdaftar" });
     }
   }).catch((err) => {
     res.status(500).send({
@@ -39,15 +39,34 @@ exports.findAll = (req, res) => {
     ? { nama: { $regex: new RegExp(nama), $options: "i" } }
     : {};
 
-  Kelas.find(condition).populate('id_matakuliah')
+  /*Kelas.find().populate({path:'id_matakuliah', match:{$or:[{nama:"Konsep Teknologi Informatika\n"},{nama:"Praktikum Rekayasa Perangkat Lunak\n"},]}})
     .then((data) => {
       res.send(data);
+      
     })
     .catch((err) => {
       res.status(500).send({
         message: err.message || "Some error occurred while retrieving.",
       });
+    });*/
+
+    Kelas.aggregate([
+      {
+        $lookup: {
+          from: "matakuliahs",
+          localField: "id_matakuliah",
+          foreignField: "_id",
+          as: "id_matakuliah"
+        }
+      },
+    ]).then((data) => {
+      res.send(data);
+    }).catch((err) => {
+      res.status(500).send({
+        message: err.message || "Some error occurred while retrieving.",
+      });
     });
+
 };
 
 exports.findOne = (req, res) => {
@@ -83,7 +102,7 @@ exports.update = (req, res) => {
 exports.delete = (req, res) => {
   const id = req.params.id;
 
-  Kelas.findByIdAndRemove(id)
+  Kelas.softDelete({ _id: id })
     .then((data) => {
       if (!data) {
         res.status(404).send({

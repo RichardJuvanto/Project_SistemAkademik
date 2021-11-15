@@ -19,25 +19,25 @@ exports.create = (req, res) => {
   // Save Mahasiswa in the database
   Mahasiswa.find({
     nim: req.body.nim,
-  }).then((data)=>{
-    if(!data.length > 0){
+  }).then((data) => {
+    if (!data.length > 0) {
       mahasiswa
-      .save(mahasiswa)
-      .then((data1) => {
-        res.send(data1);
-      })
-      .catch((err) => {
-        res.status(500).send({
-          message: err.message || "Some error occurred while creating the Mahasiswa.",
+        .save(mahasiswa)
+        .then((data1) => {
+          res.send(data1);
+        })
+        .catch((err) => {
+          res.status(500).send({
+            message: err.message || "Some error occurred while creating the Mahasiswa.",
+          });
         });
-      });
-    }else{
+    } else {
       res.status(412).send({
-        message: "NIM "+ req.body.nim+ " Telah Terpakai",
+        message: "NIM " + req.body.nim + " Telah Terpakai",
       });
     }
   })
-  
+
 };
 
 exports.findAll = (req, res) => {
@@ -46,7 +46,9 @@ exports.findAll = (req, res) => {
     ? { nama: { $regex: new RegExp(nama), $options: "i" } }
     : {};
 
-  Mahasiswa.find(condition).populate("id_programStudi").populate("id_kelas")
+  //match:{isDeleted:{$in:[true,false]}}  
+
+  /*Mahasiswa.find(condition).populate("id_programStudi").populate({path:"id_kelas", match:{$or:[{isDeleted:true},{isDeleted:false}]}})
     .then((data) => {
       res.send(data);
     })
@@ -54,7 +56,31 @@ exports.findAll = (req, res) => {
       res.status(500).send({
         message: err.message || "Some error occurred while retrieving.",
       });
+    });*/
+  Mahasiswa.aggregate([
+    {
+      $lookup: {
+        from: "kelas",
+        localField: "id_kelas",
+        foreignField: "_id",
+        as: "id_kelas"
+      }
+    },
+    {
+      $lookup: {
+        from: "programstudis",
+        localField: "id_programStudi",
+        foreignField: "_id",
+        as: "id_programStudi"
+      }
+    },
+  ]).then((data) => {
+    res.send(data);
+  }).catch((err) => {
+    res.status(500).send({
+      message: err.message || "Some error occurred while retrieving.",
     });
+  });
 };
 
 exports.findOne = (req, res) => {
@@ -104,7 +130,7 @@ exports.update = (req, res) => {
 exports.delete = (req, res) => {
   const id = req.params.id;
 
-  Mahasiswa.findByIdAndRemove(id)
+  Mahasiswa.softDelete({ _id: id })
     .then((data) => {
       if (!data) {
         res.status(404).send({
@@ -127,12 +153,12 @@ exports.deleteAll = (req, res) => { };
 
 exports.findAllPublished = (req, res) => { };
 
-exports.findByKelas = (req, res) =>{
+exports.findByKelas = (req, res) => {
   Mahasiswa.find(
     {
       $match:
       {
-        id_kelas:req.query.kelas,
+        id_kelas: req.query.kelas,
       }
     }
   )

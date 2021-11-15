@@ -47,6 +47,8 @@ exports.findAll = (req, res) => {
        message: err.message || "Some error occurred while retrieving.",
      });
    });
+
+   
 };
  
 exports.findOne = (req, res) => {
@@ -82,7 +84,7 @@ exports.update = (req, res) => {
 exports.delete = (req, res) => {
  const id = req.params.id;
  
- Matakuliah.findByIdAndRemove(id)
+ Matakuliah.softDelete({ _id: id })
    .then((data) => {
      if (!data) {
        res.status(404).send({
