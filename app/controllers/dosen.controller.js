@@ -50,6 +50,9 @@ exports.findAll = (req, res) => {
     });*/
     Dosen.aggregate([
       {
+        $match:{isDeleted:false},
+      },
+      {
         $lookup: {
           from: "matakuliahs",
           localField: "id_matakuliah",

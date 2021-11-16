@@ -52,6 +52,9 @@ exports.findAll = (req, res) => {
 
     Kelas.aggregate([
       {
+        $match:{isDeleted:false},
+      },
+      {
         $lookup: {
           from: "matakuliahs",
           localField: "id_matakuliah",

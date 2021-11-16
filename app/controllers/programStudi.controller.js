@@ -50,6 +50,9 @@ exports.findAll = (req, res) => {
 
    ProgramStudi.aggregate([
     {
+      $match:{isDeleted:false},
+    },
+    {
       $lookup: {
         from: "kelas",
         localField: "id_kelas",

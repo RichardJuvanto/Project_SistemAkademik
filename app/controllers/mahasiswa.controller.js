@@ -59,6 +59,9 @@ exports.findAll = (req, res) => {
     });*/
   Mahasiswa.aggregate([
     {
+      $match:{isDeleted:false},
+    },
+    {
       $lookup: {
         from: "kelas",
         localField: "id_kelas",
