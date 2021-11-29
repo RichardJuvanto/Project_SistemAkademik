@@ -104,6 +104,10 @@ exports.detail = (req, res) => {
         $group: {
           _id: { id_mahasiswa: "$absensi.id_mahasiswa" },
           kelas: { $first: "$id_kelas" },
+          matakuliah: { $first: "$id_matakuliah" },
+          dosen: { $first: "$id_dosen" },
+          mahasiswa: { $first: "$absensi.id_mahasiswa" },
+          keterangan: { $first: "$absensi.keterangan" },
           jumlah: { $sum: 1 },
         }
       },
@@ -139,7 +143,42 @@ exports.detail = (req, res) => {
           $project: {
             _id: 1,
             kelas: 1,
+            matakuliah: 1,
+            mahasiswa: 1,
+            dosen: 1,
+            keterangan: 1,
             percent: { $multiply: [{ $divide: ["$jumlah", data[0].total] }, 100] },
+          }
+        },{
+          $lookup: {
+            from: "mahasiswas",
+            localField: "mahasiswa",
+            foreignField: "_id",
+            as: "mahasiswa"
+          }
+        },
+        {
+          $lookup: {
+            from: "kelas",
+            localField: "kelas",
+            foreignField: "_id",
+            as: "kelas"
+          }
+        },
+        {
+          $lookup: {
+            from: "dosens",
+            localField: "dosen",
+            foreignField: "_id",
+            as: "dosen"
+          }
+        },
+        {
+          $lookup: {
+            from: "matakuliahs",
+            localField: "matakuliah",
+            foreignField: "_id",
+            as: "matakuliah"
           }
         },
       ]).then((data1) => {
@@ -192,7 +231,7 @@ exports.laporan = (req, res) => {
             _id: { id_mahasiswa: "$absensi.id_mahasiswa", keterangan: "$absensi.keterangan" },
             kelas: { $first: "$id_kelas" },
             matakuliah: { $first: "$id_matakuliah" },
-            dosen: {$first: "$id_dosen"},
+            dosen: { $first: "$id_dosen" },
             mahasiswa: { $first: "$absensi.id_mahasiswa" },
             keterangan: { $first: "$absensi.keterangan" },
             jumlah: { $sum: 1 },
@@ -249,11 +288,11 @@ exports.laporan = (req, res) => {
           res.status(503).send({
             message: "id_matakuliah or id_kelas was not found!"
           });
-        }else{
+        } else {
           res.send(data1);
         }
       });
-    }).catch((err)=>{
+    }).catch((err) => {
       res.status(500).send({
         message: "id_matakuliah or id_kelas not Found!"
       });
