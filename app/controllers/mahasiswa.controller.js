@@ -103,7 +103,7 @@ exports.update = (req, res) => {
   const id = req.params.id;
 
   const mahasiswa2 = {
-    foto: req.files[0].filename,
+    foto: req?.files[0]?.filename,
     nama: req.body.nama,
     nim: req.body.nim,
     nik: req.body.nik,

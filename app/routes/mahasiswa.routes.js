@@ -42,7 +42,7 @@ module.exports = (app) => {
     router.get("/", mahasiswa.findAll);
 
     router.get("/find/:id", mahasiswa.findOne);
-
+    
     router.put("/:id",upload.any(), mahasiswa.update);
     
     router.delete("/:id", mahasiswa.delete);
