@@ -101,17 +101,6 @@ exports.findOne = (req, res) => {
 
 exports.update = (req, res) => {
   const id = req.params.id;
-
-  var checkNim;
-  Mahasiswa.findById(id).populate("id_programStudi").populate("id_kelas")
-    .then((data) => {
-      if (!data) res.status(404).send({ message: "Not found with id " + id });
-      else checkNim = data.nim;
-    })
-    .catch((err) => {
-      res.status(500).send({ message: "Error retrieving with id=" + id });
-    });
-
   const mahasiswa2 = {
     foto: req?.files[0]?.filename,
     nama: req.body.nama,
@@ -125,29 +114,42 @@ exports.update = (req, res) => {
     noTelp: req.body.noTelp,
     alamatOrtu: req.body.alamatOrtu,
   };
+  var checkNim;
   Mahasiswa.find({
-    nim: req.body.nim,
-  }).then((data) => {
-    if (!data.length > 0 || checkNim == req.body.nim) {
-      Mahasiswa.findByIdAndUpdate(id, mahasiswa2, { useFindAndModify: false })
-        .then((data) => {
-          if (!data) {
-            res.status(404).send({
-              message: `Cannot update Mahasiswa with id=${id}. Maybe Mahasiswa was not found!`,
-            });
-          } else res.send({ message: "Mahasiswa was updated successfully." });
-        })
-        .catch((err) => {
-          res.status(500).send({
-            message: "Error updating Mahasiswa with id=" + id,
-          });
-        });
-    } else {
-      res.status(412).send({
-        message: "NIM " + req.body.nim + " Telah Terpakai",
-      });
-    }
+    _id: id
   })
+    .then((data) => {
+      checkNim = data[0].nim;
+      Mahasiswa.find({
+        nim: req.body.nim,
+      }).then((data) => {
+        if (!data.length > 0 || checkNim == req.body.nim) {
+          Mahasiswa.findByIdAndUpdate(id, mahasiswa2, { useFindAndModify: false })
+            .then((data) => {
+              if (!data) {
+                res.status(404).send({
+                  message: `Cannot update Mahasiswa with id=${id}. Maybe Mahasiswa was not found!`,
+                });
+              } else res.send({ message: "Mahasiswa was updated successfully." });
+            })
+            .catch((err) => {
+              res.status(500).send({
+                message: "Error updating Mahasiswa with id=" + id,
+              });
+            });
+        } else {
+          res.status(412).send({
+            message: "NIM " + req.body.nim + " Telah Terpakai",
+          });
+        }
+      })
+    })
+    .catch((err) => {
+      res.status(500).send({ message: "Error retrieving with id=" + id });
+    });
+
+
+
 };
 exports.delete = (req, res) => {
   const id = req.params.id;

@@ -1,4 +1,5 @@
 const db = require("../models");
+const mongoose = require("../models");
 const Dosen = db.dosen;
 
 exports.create = (req, res) => {
@@ -85,37 +86,42 @@ exports.findOne = (req, res) => {
 exports.update = (req, res) => {
   const id = req.params.id;
   var checkNip;
-  Dosen.findById(id)
+  Dosen.find({
+    _id: req.params.id,
+  })
     .then((data) => {
-      if (!data) res.status(404).send({ message: "Not found with id " + id });
-      else checkNip = data.nip; 
+      console.log(data);
+      checkNip = data[0].nip;
+      Dosen.find({
+        nip: req.body.nip,
+      }).then((data) => {
+        console.log(checkNip);
+        console.log(req.body.nip);
+        console.log(checkNip === req.body.nip);
+        if (!data.length > 0 || checkNip == req.body.nip) {
+          Dosen.findByIdAndUpdate(id, req.body, { useFindAndModify: false })
+            .then((data) => {
+              if (!data) {
+                res.status(404).send({
+                  message: `Cannot update Dosen with id=${id}. Maybe Dosen was not found!`,
+                });
+              } else res.send({ message: "Dosen was updated successfully." });
+            })
+            .catch((err) => {
+              res.status(500).send({
+                message: "Error updating Dosen with id=" + id,
+              });
+            });
+        } else {
+          res.status(412).send({
+            message: "Dosen dengan NIP " + req.body.nip + " Sudah Terdaftar",
+          })
+        }
+      });
     })
     .catch((err) => {
       res.status(500).send({ message: "Error retrieving with id=" + id });
     });
-  Dosen.find({
-    nip: req.body.nip,
-  }).then((data) => {
-    if (!data.length > 0 || checkNip == req.body.nip) {
-      Dosen.findByIdAndUpdate(id, req.body, { useFindAndModify: false })
-        .then((data) => {
-          if (!data) {
-            res.status(404).send({
-              message: `Cannot update Dosen with id=${id}. Maybe Dosen was not found!`,
-            });
-          } else res.send({ message: "Dosen was updated successfully." });
-        })
-        .catch((err) => {
-          res.status(500).send({
-            message: "Error updating Dosen with id=" + id,
-          });
-        });
-    }else{
-      res.status(412).send({
-        message: "Dosen dengan NIP " + req.body.nip + " Sudah Terdaftar",
-      })
-    }
-  });
 
 };
 exports.delete = (req, res) => {

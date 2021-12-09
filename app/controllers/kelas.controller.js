@@ -90,41 +90,43 @@ exports.update = (req, res) => {
 
   var checkNama;
 
-  Kelas.findById(id)
+  Kelas.find({
+    _id: req.params.id,
+  })
     .then((data) => {
-      if (!data) res.status(404).send({ message: "Not found with id " + id });
-      else checkNama = data.nama;
+      checkNama = data[0].nama;
+      Kelas.find({
+        nama: req.body.nama,
+      }).then((data) => {
+        console.log(data[0]);
+        if (!data[0] || checkNama == req.body.nama) {
+          Kelas.findByIdAndUpdate(id, req.body, { useFindAndModify: false })
+            .then((data) => {
+              if (!data) {
+                res.status(404).send({
+                  message: `Cannot update Kelas with id=${id}. Maybe Kelas was not found!`,
+                });
+              } else res.send({ message: "Kelas was updated successfully." });
+            })
+            .catch((err) => {
+              res.status(500).send({
+                message: "Error updating Kelas with id=" + id,
+              });
+            });
+        } else {
+          res.status(412).send({ message: "Nama " + req.body.nama + " Sudah Terdaftar" });
+        }
+      }).catch((err) => {
+        res.status(500).send({
+          message: err.message || "Some error occurred while retrieving.",
+        });
+      });
     })
     .catch((err) => {
       res.status(500).send({ message: "Error retrieving with id=" + id });
     });
 
-  Kelas.find({
-    nama: req.body.nama,
-  }).then((data) => {
-    console.log(data[0]);
-    if (!data[0] || checkNama == req.body.nama) {
-      Kelas.findByIdAndUpdate(id, req.body, { useFindAndModify: false })
-        .then((data) => {
-          if (!data) {
-            res.status(404).send({
-              message: `Cannot update Kelas with id=${id}. Maybe Kelas was not found!`,
-            });
-          } else res.send({ message: "Kelas was updated successfully." });
-        })
-        .catch((err) => {
-          res.status(500).send({
-            message: "Error updating Kelas with id=" + id,
-          });
-        });
-    } else {
-      res.status(412).send({ message: "Nama " + req.body.nama + " Sudah Terdaftar" });
-    }
-  }).catch((err) => {
-    res.status(500).send({
-      message: err.message || "Some error occurred while retrieving.",
-    });
-  });
+
 
 };
 exports.delete = (req, res) => {

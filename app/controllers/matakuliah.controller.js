@@ -68,38 +68,40 @@ exports.update = (req, res) => {
   const id = req.params.id;
 
   var checkKode;
-  Matakuliah.findById(id)
+  Matakuliah.find({
+    _id: id,
+  })
     .then((data) => {
-      if (!data) res.status(404).send({ message: "Not found with id " + id });
-      else checkKode = data.kode;
+      checkKode = data[0].kode;
+      Matakuliah.find({
+        kode: req.body.kode,
+      }).then((data) => {
+        if (!data.length > 0 || checkKode == req.body.kode) {
+          Matakuliah.findByIdAndUpdate(id, req.body, { useFindAndModify: false })
+            .then((data) => {
+              if (!data) {
+                res.status(404).send({
+                  message: `Cannot update Matakuliah with id=${id}. Maybe Matakuliah was not found!`,
+                });
+              } else res.send({ message: "Matakuliah was updated successfully." });
+            })
+            .catch((err) => {
+              res.status(500).send({
+                message: "Error updating Matakuliah with id=" + id,
+              });
+            });
+        } else {
+          res.status(412).send({
+            message: "Kode " + req.body.kode + " Sudah Terdaftar",
+          });
+        }
+      });
     })
     .catch((err) => {
       res.status(500).send({ message: "Error retrieving with id=" + id });
     });
 
-  Matakuliah.find({
-    kode: req.body.kode,
-  }).then((data) => {
-    if (!data.length > 0 || checkKode == req.body.kode) {
-      Matakuliah.findByIdAndUpdate(id, req.body, { useFindAndModify: false })
-        .then((data) => {
-          if (!data) {
-            res.status(404).send({
-              message: `Cannot update Matakuliah with id=${id}. Maybe Matakuliah was not found!`,
-            });
-          } else res.send({ message: "Matakuliah was updated successfully." });
-        })
-        .catch((err) => {
-          res.status(500).send({
-            message: "Error updating Matakuliah with id=" + id,
-          });
-        });
-    } else {
-      res.status(412).send({
-        message: "Kode " + req.body.kode + " Sudah Terdaftar",
-      });
-    }
-  });
+
 
 };
 exports.delete = (req, res) => {

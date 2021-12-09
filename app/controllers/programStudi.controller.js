@@ -85,37 +85,39 @@ exports.findOne = (req, res) => {
 exports.update = (req, res) => {
   const id = req.params.id;
   var checkNama;
-  ProgramStudi.findById(id).populate({ path: 'id_kelas', populate: { path: "id_matakuliah" } })
+  ProgramStudi.findById({
+      _id: id,
+    })
     .then((data) => {
-      if (!data) res.status(404).send({ message: "Not found with id " + id });
-      else checkNama = data.nama;
+      checkNama = data[0].nama;
+      ProgramStudi.find({
+        nama: req.body.nama,
+      }).then((data) => {
+        if (!data.length > 0 || checkNama == req.body.nama) {
+          ProgramStudi.findByIdAndUpdate(id, req.body, { useFindAndModify: false })
+            .then((data) => {
+              if (!data) {
+                res.status(404).send({
+                  message: `Cannot update ProgramStudi with id=${id}. Maybe ProgramStudi was not found!`,
+                });
+              } else res.send({ message: "ProgramStudi was updated successfully." });
+            })
+            .catch((err) => {
+              res.status(500).send({
+                message: "Error updating ProgramStudi with id=" + id,
+              });
+            });
+        } else {
+          res.status(412).send({
+            message: "Nama " + req.body.nama + " Sudah Terdaftar"
+          })
+        }
+      });
     })
     .catch((err) => {
       res.status(500).send({ message: "Error retrieving with id=" + id });
     });
-  ProgramStudi.find({
-    nama: req.body.nama,
-  }).then((data) => {
-    if (!data.length > 0 || checkNama == req.body.nama) {
-      ProgramStudi.findByIdAndUpdate(id, req.body, { useFindAndModify: false })
-        .then((data) => {
-          if (!data) {
-            res.status(404).send({
-              message: `Cannot update ProgramStudi with id=${id}. Maybe ProgramStudi was not found!`,
-            });
-          } else res.send({ message: "ProgramStudi was updated successfully." });
-        })
-        .catch((err) => {
-          res.status(500).send({
-            message: "Error updating ProgramStudi with id=" + id,
-          });
-        });
-    } else {
-      res.status(412).send({
-        message: "Nama " + req.body.nama + " Sudah Terdaftar"
-      })
-    }
-  });
+
 
 };
 exports.delete = (req, res) => {
