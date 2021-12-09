@@ -85,7 +85,7 @@ exports.findOne = (req, res) => {
 exports.update = (req, res) => {
   const id = req.params.id;
   var checkNama;
-  ProgramStudi.findById({
+  ProgramStudi.find({
       _id: id,
     })
     .then((data) => {

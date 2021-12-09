@@ -116,7 +116,7 @@ exports.update = (req, res) => {
   };
   var checkNim;
   Mahasiswa.find({
-    _id: id
+    _id: id,
   })
     .then((data) => {
       checkNim = data[0].nim;
