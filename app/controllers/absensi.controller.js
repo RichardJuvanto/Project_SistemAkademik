@@ -132,6 +132,14 @@ exports.detail = (req, res) => {
           $group: {
             _id: { id_mahasiswa: "$absensi.id_mahasiswa", keterangan: "$absensi.keterangan" },
             kelas: { $first: "$id_kelas" },
+            kelas: { $first: "$id_kelas" },
+            matakuliah: { $first: "$id_matakuliah" },
+            dosen: { $first: "$id_dosen" },
+            tanggal: {$first: "$tanggal"},
+            masuk: {$first: "$jam.masuk"},
+            keluar:{$first: "$jam.keluar"},
+            mahasiswa: { $first: "$absensi.id_mahasiswa" },
+            keterangan: { $first: "$absensi.keterangan" },
             jumlah: { $sum: 1 },
           }
         }, {
@@ -145,11 +153,14 @@ exports.detail = (req, res) => {
             kelas: 1,
             matakuliah: 1,
             mahasiswa: 1,
+            tanggal:1,
+            masuk:1,
+            keluar:1,
             dosen: 1,
             keterangan: 1,
             percent: { $multiply: [{ $divide: ["$jumlah", data[0].total] }, 100] },
           }
-        },{
+        }, {
           $lookup: {
             from: "mahasiswas",
             localField: "mahasiswa",
