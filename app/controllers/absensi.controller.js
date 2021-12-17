@@ -90,75 +90,27 @@ exports.delete = (req, res) => {
 
 exports.detail = (req, res) => {
   if (req.query.kelas && req.query.matakuliah && req.query.mahasiswa) {
-    Absensi.aggregate([
-      {
-        $match: {
-          id_kelas: mongoose.Types.ObjectId(req.query.kelas),
-          id_matakuliah: mongoose.Types.ObjectId(req.query.matakuliah)
-        }
-      },
-      {
-        $unwind: "$absensi",
-      },
-      {
-        $group: {
-          _id: { id_mahasiswa: "$absensi.id_mahasiswa" },
-          kelas: { $first: "$id_kelas" },
-          matakuliah: { $first: "$id_matakuliah" },
-          dosen: { $first: "$id_dosen" },
-          mahasiswa: { $first: "$absensi.id_mahasiswa" },
-          keterangan: { $first: "$absensi.keterangan" },
-          jumlah: { $sum: 1 },
-        }
-      },
-      {
-        $project: {
-          total: "$jumlah",
-          //percent: { $multiply: [{ $divide: ["$jumlah", "$jumlah"] }, 100] },
-        }
-      },
-    ]).then((data) => {
       Absensi.aggregate([
-        {
-          $match: {
-            id_kelas: mongoose.Types.ObjectId(req.query.kelas),
-            id_matakuliah: mongoose.Types.ObjectId(req.query.matakuliah),
-          }
-        },
         {
           $unwind: "$absensi",
         },
         {
-          $group: {
-            _id: { id_mahasiswa: "$absensi.id_mahasiswa", keterangan: "$absensi.keterangan" },
-            kelas: { $first: "$id_kelas" },
-            kelas: { $first: "$id_kelas" },
-            matakuliah: { $first: "$id_matakuliah" },
-            dosen: { $first: "$id_dosen" },
-            tanggal: {$first: "$tanggal"},
-            masuk: {$first: "$jam.masuk"},
-            keluar:{$first: "$jam.keluar"},
-            mahasiswa: { $first: "$absensi.id_mahasiswa" },
-            keterangan: { $first: "$absensi.keterangan" },
-            jumlah: { $sum: 1 },
-          }
-        }, {
           $match: {
-            "_id.id_mahasiswa": mongoose.Types.ObjectId(req.query.mahasiswa),
+            id_kelas: mongoose.Types.ObjectId(req.query.kelas),
+            id_matakuliah: mongoose.Types.ObjectId(req.query.matakuliah),
+            "absensi.id_mahasiswa": mongoose.Types.ObjectId(req.query.mahasiswa),
           }
         },
         {
           $project: {
             _id: 1,
-            kelas: 1,
-            matakuliah: 1,
-            mahasiswa: 1,
+            kelas: "$id_kelas",
+            matakuliah: "$id_matakuliah",
+            mahasiswa: "$absensi.id_mahasiswa",
             tanggal:1,
-            masuk:1,
-            keluar:1,
-            dosen: 1,
-            keterangan: 1,
-            percent: { $multiply: [{ $divide: ["$jumlah", data[0].total] }, 100] },
+            masuk: "$jam.masuk",
+            keluar:"$jam.keluar",
+            keterangan: "$absensi.keterangan",
           }
         }, {
           $lookup: {
@@ -178,14 +130,6 @@ exports.detail = (req, res) => {
         },
         {
           $lookup: {
-            from: "dosens",
-            localField: "dosen",
-            foreignField: "_id",
-            as: "dosen"
-          }
-        },
-        {
-          $lookup: {
             from: "matakuliahs",
             localField: "matakuliah",
             foreignField: "_id",
@@ -195,7 +139,6 @@ exports.detail = (req, res) => {
       ]).then((data1) => {
         res.send(data1);
       });
-    });
 
   }
 }
@@ -214,18 +157,21 @@ exports.laporan = (req, res) => {
       },
       {
         $group: {
-          _id: { id_mahasiswa: "$absensi.id_mahasiswa" },
-          kelas: { $first: "$id_kelas" },
-          jumlah: { $sum: 1 },
+          _id:  "$absensi.id_mahasiswa",
+          total: { $sum: 1 },
         }
       },
       {
+        $sort:{total:-1},
+      },
+      {
         $project: {
-          total: "$jumlah",
+          total: {$max:"$total"},
           //percent: { $multiply: [{ $divide: ["$jumlah", "$jumlah"] }, 100] },
         }
       },
     ]).then((data) => {
+      console.log(data)
       Absensi.aggregate([
 
         {
@@ -259,7 +205,7 @@ exports.laporan = (req, res) => {
             mahasiswa: 1,
             dosen: 1,
             keterangan: 1,
-            percent: { $multiply: [{ $divide: ["$jumlah", data[0].total] }, 100] },
+            percent: {$round:[{ $multiply: [{ $divide: ["$jumlah", data[0].total] }, 100] },2]},
           }
         }, {
           $lookup: {
@@ -293,14 +239,14 @@ exports.laporan = (req, res) => {
             as: "matakuliah"
           }
         },
-      ]).then((data1) => {
-        //res.send(data1);
-        if (!data1) {
+      ]).then((data) => {
+        //res.send(data);
+        if (!data) {
           res.status(503).send({
             message: "id_matakuliah or id_kelas was not found!"
           });
         } else {
-          res.send(data1);
+          res.send(data);
         }
       });
     }).catch((err) => {
