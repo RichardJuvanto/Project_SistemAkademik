@@ -42,6 +42,9 @@ require("./app/routes/matakuliah.routes.js")(app);
 require("./app/routes/programStudi.routes.js")(app);
 require("./app/routes/dosen.routes.js")(app);
 require("./app/routes/absensi.routes.js")(app);
+require("./app/routes/auth.routes")(app);
+require("./app/routes/user.routes")(app);
+
 const PORT = process.env.PORT || 8081;
 app.listen(PORT, () => {
    console.log(`Server backend port ${PORT}.`);

@@ -12,6 +12,7 @@ db.dosen = require('./dosen.model')(mongoose);
 db.matakuliah = require('./matakuliah.model')(mongoose);
 db.programStudi = require('./programStudi.model')(mongoose);
 db.absensi = require('./absensi.model')(mongoose);
+db.user = require('./user.model')(mongoose);
  
 module.exports = db;
 
