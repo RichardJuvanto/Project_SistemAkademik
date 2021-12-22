@@ -61,3 +61,11 @@
    
    e. GET Detail per Mahasiswa : GET Laporan Absensi : https://localhost:8081/api/absensi/detail?matakuliah=<id_mahasiswa>&kelas=<id_kelas>&mahasiswa=<id_mahasiswa> atau https://calm-savannah-30077.herokuapp.com/api/absensi/detail?matakuliah=<id_mahasiswa>&kelas=<id_kelas>&mahasiswa=<id_mahasiswa>
    
+7. API Login
+   
+   Data yang Digunakan => (nama, username, email, password)
+   
+   a. SignUp (POST): https://localhost:8081/api/auth/signup
+   
+   b. SignIn (POST): https://localhost:8081/api/auth/signin
+   
